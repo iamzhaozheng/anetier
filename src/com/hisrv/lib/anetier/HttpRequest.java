@@ -104,7 +104,7 @@ abstract public class HttpRequest implements HttpCallBack {
 	}
 	
 	public void executeMockSync() {
-		HttpResponse resp = getMockResponse();
+		getMockResponse();
 	}
 
 	protected HttpUriRequest fetchPost(List<NameValuePair> params)
