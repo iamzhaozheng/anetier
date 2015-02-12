@@ -11,7 +11,6 @@ public abstract class HttpRequestWithToken extends HttpRequest {
 
 	@Override
 	protected void fillParams(List<NameValuePair> params) {
-		super.fillParams(params);
 		String mac = ParamsCache.getMacAddress();
 		String version = ParamsCache.getAppVersion();
 		String imei = ParamsCache.getImei();

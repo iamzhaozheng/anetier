@@ -3,5 +3,7 @@
 
     <string name="app_name">Anetier</string>
     <string name="hello_world">Hello world!</string>
-
+	<string name="usd">Input USD</string>
+	<string name="convert">Convert</string>
+	<string name="cny">Chinese Yuan</string>
 </resources>

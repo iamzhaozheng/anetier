@@ -37,9 +37,6 @@ abstract public class HttpJSONResponse extends HttpResponse {
 		}
 	}
 	
-	public HttpJSONResponse() {
-	}
-
 	abstract protected void parse(JSONObject json) throws JSONException;
 
 	@Override

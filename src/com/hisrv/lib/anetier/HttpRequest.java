@@ -138,16 +138,19 @@ abstract public class HttpRequest implements HttpCallBack {
 			sb.append("&");
 		}
 		sb.deleteCharAt(sb.length() - 1);
+		NetLog.d(TAG, "get url:" + sb.toString());
 
 		HttpGet get = new HttpGet(sb.toString());
 		return get;
 	}
 
 	protected void logPostParams(String url, List<NameValuePair> params) {
+		NetLog.d(TAG, "url: " + url);
 		StringBuilder sb = new StringBuilder();
 		for (NameValuePair param : params) {
 			sb.append(param.getName() + ":" + param.getValue() + ", ");
 		}
+		NetLog.d(TAG, "params: " + sb.toString());
 	}
 
 	@Override
@@ -165,12 +168,13 @@ abstract public class HttpRequest implements HttpCallBack {
 		}
 	}
 
-	protected void fillParams(List<NameValuePair> params) {
-
-	}
-
+	abstract protected void fillParams(List<NameValuePair> params);
+	
 	abstract protected String getUrl();
 
+	/**
+	 * Just return new XxxxxxResponse(rst, tag);
+	 */
 	abstract protected HttpResponse getResponse(byte[] rst, Object tag);
 	
 	abstract protected HttpResponse getMockResponse();
