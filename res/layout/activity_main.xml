@@ -11,18 +11,29 @@
         android:layout_height="wrap_content"
         android:hint="@string/usd" />
 
-    <TextView
-        android:id="@+id/cny"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cny" />
+
+        <TextView
+            android:id="@+id/cny"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/convert"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="@string/cny"/>
-    
-    <Button android:id="@+id/convert"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="@string/convert"/>
-    
-    
+        android:text="@string/convert" />
+
 </LinearLayout>
