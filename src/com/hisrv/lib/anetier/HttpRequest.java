@@ -1,5 +1,7 @@
 package com.hisrv.lib.anetier;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -8,13 +10,16 @@ import java.util.List;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.protocol.HTTP;
 
 import com.hisrv.lib.anetier.AsyncHttpCloudClient.HttpCallBack;
+import com.hisrv.lib.multipart.FilePart;
+import com.hisrv.lib.multipart.MultipartEntity;
+import com.hisrv.lib.multipart.Part;
+import com.hisrv.lib.multipart.StringPart;
 
 abstract public class HttpRequest implements HttpCallBack {
 	private final static String TAG = "HttpRequest";
@@ -28,6 +33,12 @@ abstract public class HttpRequest implements HttpCallBack {
 	protected HttpUriRequest mRequest;
 
 	protected AsyncHttpCloudClient mClient;
+
+	private List<NameFilePair> mFiles;
+
+	public HttpRequest() {
+		mFiles = new ArrayList<HttpRequest.NameFilePair>();
+	}
 
 	public void clearListener() {
 		mOnResponseListener = null;
@@ -64,12 +75,21 @@ abstract public class HttpRequest implements HttpCallBack {
 			}
 			e.printStackTrace();
 			return;
+		} catch (FileNotFoundException e) {
+			if (l != null) {
+				HttpResponse resp = getResponse(null, mTag);
+				resp.error = HttpResponse.NO_FILE_ERROR;
+				l.onGetResponse(resp);
+				mOnResponseListener = null;
+			}
+			e.printStackTrace();
+			return;
 		}
 		mClient = new AsyncHttpCloudClient(this, mTag, mRequest);
 		mClient.start();
 
 	}
-	
+
 	public HttpResponse executeSync() {
 		HttpResponse resp;
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
@@ -81,7 +101,8 @@ abstract public class HttpRequest implements HttpCallBack {
 			} else {
 				mRequest = fetchGet(params);
 			}
-			resp = getResponse(new HttpCloudClient().excuteHttpRequest(mRequest), mTag);
+			resp = getResponse(
+					new HttpCloudClient().excuteHttpRequest(mRequest), mTag);
 		} catch (UnsupportedEncodingException e) {
 			resp = getResponse(null, mTag);
 			resp.error = HttpResponse.NETWORK_ERROR;
@@ -97,20 +118,30 @@ abstract public class HttpRequest implements HttpCallBack {
 		}
 		return resp;
 	}
-	
+
 	public void executeMock(final OnResponseListener l) {
 		HttpResponse resp = getMockResponse();
 		l.onGetResponse(resp);
 	}
-	
+
 	public void executeMockSync() {
 		getMockResponse();
 	}
 
 	protected HttpUriRequest fetchPost(List<NameValuePair> params)
-			throws UnsupportedEncodingException {
+			throws UnsupportedEncodingException, FileNotFoundException {
 		HttpPost post = new HttpPost(getUrl());
-		post.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
+		Part[] parts = new Part[params.size() + mFiles.size()];
+		for (int i = 0; i < params.size(); i++) {
+			NameValuePair nvp = params.get(i);
+			parts[i] = new StringPart(nvp.getName(), nvp.getValue(), HTTP.UTF_8);
+		}
+		for (int i = 0; i < mFiles.size(); i++) {
+			NameFilePair nfp = mFiles.get(i);
+			parts[params.size() + i] = new FilePart(nfp.name, nfp.file);
+		}
+		MultipartEntity entity = new MultipartEntity(parts);
+		post.setEntity(entity);
 		return post;
 	}
 
@@ -158,30 +189,39 @@ abstract public class HttpRequest implements HttpCallBack {
 		final OnResponseListener l = mOnResponseListener;
 		if (l != null) {
 			HttpResponse resp = getResponse(rst, tag);
-			if (resp instanceof HttpJSONResponse
-					&& resp.error == HttpResponse.SESSION_KEY_INVALID) {
-			} else {
-				l.onGetResponse(resp);
-				mOnResponseListener = null;
-			}
-
+			l.onGetResponse(resp);
+			mOnResponseListener = null;
 		}
 	}
 
+	protected void addFile(String name, File file) {
+		mFiles.add(new NameFilePair(name, file));
+	}
+
 	abstract protected void fillParams(List<NameValuePair> params);
-	
+
 	abstract protected String getUrl();
 
 	/**
 	 * Just return new XxxxxxResponse(rst, tag);
 	 */
 	abstract protected HttpResponse getResponse(byte[] rst, Object tag);
-	
+
 	abstract protected HttpResponse getMockResponse();
 
 	abstract protected int postOrGet();
 
 	public interface OnResponseListener {
 		public void onGetResponse(HttpResponse resp);
+	}
+
+	public static class NameFilePair {
+		public String name;
+		public File file;
+
+		public NameFilePair(String name, File file) {
+			this.name = name;
+			this.file = file;
+		}
 	}
 }

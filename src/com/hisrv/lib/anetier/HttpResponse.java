@@ -4,12 +4,8 @@ abstract public class HttpResponse {
 
 	public static final int OK = 0;
 	public static final int NETWORK_ERROR = -1;
-	public static final int LOGIN_ERROR = -2;
+	public static final int NO_FILE_ERROR = -2;
 
-	public static final int SESSION_KEY_INVALID = 110;
-
-	public static final int FAILED = 88;
-	public final String SUCCEDD_RESULT = "ok";
 	public int error;
 	public String errorMsg;
 	protected Object mTag;
