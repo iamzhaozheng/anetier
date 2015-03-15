@@ -1,5 +1,9 @@
 package com.hisrv.lib.anetier;
 
+import android.annotation.SuppressLint;
+import java.util.HashMap;
+import java.util.Map;
+
 abstract public class HttpResponse {
 
 	public static final int OK = 0;
@@ -8,11 +12,15 @@ abstract public class HttpResponse {
 
 	public int error;
 	public String errorMsg;
+	
 	protected Object mTag;
-
+	
+	@SuppressLint("UseSparseArrays")
+	private static Map<Integer, String> mMapErrorMsg = new HashMap<Integer, String> ();
+	
 	public HttpResponse(byte[] rst, Object tag) {
 		if (rst == null) {
-			error = NETWORK_ERROR;
+			setError(NETWORK_ERROR);
 			return;
 		}
 		mTag = tag;
@@ -20,5 +28,14 @@ abstract public class HttpResponse {
 	
 	public HttpResponse() {
 		
+	}
+	
+	public void setError(int error) {
+		this.error = error;
+		errorMsg = mMapErrorMsg.get(error);
+	}
+	
+	public static void setErrorMsg(int error, String msg) {
+		mMapErrorMsg.put(error, msg);
 	}
 }

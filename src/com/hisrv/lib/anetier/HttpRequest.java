@@ -69,7 +69,7 @@ abstract public class HttpRequest implements HttpCallBack {
 		} catch (UnsupportedEncodingException e) {
 			if (l != null) {
 				HttpResponse resp = getResponse(null, mTag);
-				resp.error = HttpResponse.NETWORK_ERROR;
+				resp.setError(HttpResponse.NETWORK_ERROR);
 				l.onGetResponse(resp);
 				mOnResponseListener = null;
 			}
@@ -78,7 +78,7 @@ abstract public class HttpRequest implements HttpCallBack {
 		} catch (FileNotFoundException e) {
 			if (l != null) {
 				HttpResponse resp = getResponse(null, mTag);
-				resp.error = HttpResponse.NO_FILE_ERROR;
+				resp.setError(HttpResponse.NETWORK_ERROR);
 				l.onGetResponse(resp);
 				mOnResponseListener = null;
 			}
@@ -105,15 +105,15 @@ abstract public class HttpRequest implements HttpCallBack {
 					new HttpCloudClient().excuteHttpRequest(mRequest), mTag);
 		} catch (UnsupportedEncodingException e) {
 			resp = getResponse(null, mTag);
-			resp.error = HttpResponse.NETWORK_ERROR;
+			resp.setError(HttpResponse.NETWORK_ERROR);
 			e.printStackTrace();
 		} catch (ClientProtocolException e) {
 			resp = getResponse(null, mTag);
-			resp.error = HttpResponse.NETWORK_ERROR;
+			resp.setError(HttpResponse.NETWORK_ERROR);
 			e.printStackTrace();
 		} catch (IOException e) {
 			resp = getResponse(null, mTag);
-			resp.error = HttpResponse.NETWORK_ERROR;
+			resp.setError(HttpResponse.NETWORK_ERROR);
 			e.printStackTrace();
 		}
 		return resp;

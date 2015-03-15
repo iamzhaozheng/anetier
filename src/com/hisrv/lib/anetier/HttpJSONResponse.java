@@ -10,15 +10,13 @@ abstract public class HttpJSONResponse extends HttpResponse {
 	
 	protected final static String TAG = "HttpJSONResponse";
 
-	public static final int JSON_ERROR = 10001;
-	
-	public static final int NETWORK_ERROR = 1000;
+	public static final int JSON_ERROR = -1000;
 	
 	private String mRstString = "";
 
 	public HttpJSONResponse(byte[] rst, Object tag) {
 		super(rst, tag);
-		error = NETWORK_ERROR;
+		setError(NETWORK_ERROR);
 		if (rst == null) {
 			return;
 		}
@@ -31,7 +29,7 @@ abstract public class HttpJSONResponse extends HttpResponse {
 			
 		} catch (JSONException e) {
 			e.printStackTrace();
-			error = JSON_ERROR;
+			setError(NETWORK_ERROR);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
