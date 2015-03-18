@@ -119,12 +119,12 @@ abstract public class HttpRequest implements HttpCallBack {
 	}
 
 	public void executeMock(final OnResponseListener l) {
-		HttpResponse resp = getMockResponse();
+		HttpResponse resp = getResponse(new byte[1], null);
 		l.onGetResponse(resp);
 	}
 
 	public void executeMockSync() {
-		getMockResponse();
+		getResponse(new byte[1], null);
 	}
 
 	protected HttpUriRequest fetchPost(List<NameValuePair> params)
@@ -205,8 +205,6 @@ abstract public class HttpRequest implements HttpCallBack {
 	 * Just return new XxxxxxResponse(rst, tag);
 	 */
 	abstract protected HttpResponse getResponse(byte[] rst, Object tag);
-
-	abstract protected HttpResponse getMockResponse();
 
 	abstract protected int postOrGet();
 

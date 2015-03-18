@@ -27,11 +27,6 @@ public class CurrencyRequest extends HttpRequest {
 	}
 	
 	@Override
-	protected HttpResponse getMockResponse() {
-		return new CurrencyResponse();
-	}
-	
-	@Override
 	protected void fillParams(List<NameValuePair> params) {
 		params.add(new BasicNameValuePair("fromCurrency", "USD"));
 		params.add(new BasicNameValuePair("toCurrency", "CNY"));

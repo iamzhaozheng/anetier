@@ -14,17 +14,15 @@ abstract public class HttpJSONResponse extends HttpResponse {
 	
 	private String mRstString = "";
 
-	/**
-	 * Just for mock response
-	 */
-	public HttpJSONResponse() {
-		super();
-	}
-	
 	public HttpJSONResponse(byte[] rst, Object tag) {
 		super(rst, tag);
 		setError(NETWORK_ERROR);
 		if (rst == null) {
+			return;
+		}
+		if (rst.length == 1) {
+			//special for mock
+			mock();
 			return;
 		}
 		try {
@@ -43,6 +41,9 @@ abstract public class HttpJSONResponse extends HttpResponse {
 	}
 	
 	abstract protected void parse(JSONObject json) throws JSONException;
+	protected void mock() {
+		
+	}
 
 	@Override
 	public String toString() {

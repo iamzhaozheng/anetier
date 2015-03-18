@@ -40,7 +40,7 @@ public class MainActivity extends Activity {
 					if (mExcuting.getAndSet(true)) {
 						return;
 					}
-					new CurrencyRequest(amount).execute(new OnResponseListener() {
+					new CurrencyRequest(amount).executeMock(new OnResponseListener() {
 						
 						@Override
 						public void onGetResponse(HttpResponse resp) {

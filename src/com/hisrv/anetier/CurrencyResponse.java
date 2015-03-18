@@ -9,13 +9,6 @@ public class CurrencyResponse extends HttpJSONResponse {
 
 	public double amount;
 	
-	//for mock
-	public CurrencyResponse() {
-		super();
-		error = OK;
-		amount = 100;
-	}
-	
 	public CurrencyResponse(byte[] rst, Object tag) {
 		super(rst, tag);
 	}
@@ -28,6 +21,12 @@ public class CurrencyResponse extends HttpJSONResponse {
 			JSONObject data = json.getJSONObject("retData");
 			amount = data.getDouble("convertedamount");
 		}
+	}
+	
+	@Override
+	protected void mock() {
+		error = OK;
+		amount = 100;
 	}
 	
 }

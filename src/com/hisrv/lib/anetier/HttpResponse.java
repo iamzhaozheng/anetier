@@ -26,13 +26,6 @@ abstract public class HttpResponse {
 		mTag = tag;
 	}
 	
-	/**
-	 * Just for mock response
-	 */
-	public HttpResponse() {
-		
-	}
-	
 	public void setError(int error) {
 		this.error = error;
 		errorMsg = mMapErrorMsg.get(error);
