@@ -7,7 +7,7 @@ public class NetLog {
 	public static void debug(boolean open) {
 		sDebug = open;
 	}
-	public static void d(String tag, String msg) {
+	public static void d(String msg) {
 		if (sDebug) {
 			Log.d("Anetier", msg);
 		}

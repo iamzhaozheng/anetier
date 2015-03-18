@@ -9,6 +9,13 @@ public class CurrencyResponse extends HttpJSONResponse {
 
 	public double amount;
 	
+	//for mock
+	public CurrencyResponse() {
+		super();
+		error = OK;
+		amount = 100;
+	}
+	
 	public CurrencyResponse(byte[] rst, Object tag) {
 		super(rst, tag);
 	}

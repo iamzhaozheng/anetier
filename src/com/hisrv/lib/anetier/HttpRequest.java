@@ -22,7 +22,6 @@ import com.hisrv.lib.multipart.Part;
 import com.hisrv.lib.multipart.StringPart;
 
 abstract public class HttpRequest implements HttpCallBack {
-	private final static String TAG = "HttpRequest";
 
 	public final static int HTTP_POST = 0;
 	public final static int HTTP_GET = 1;
@@ -169,19 +168,19 @@ abstract public class HttpRequest implements HttpCallBack {
 			sb.append("&");
 		}
 		sb.deleteCharAt(sb.length() - 1);
-		NetLog.d(TAG, "get url:" + sb.toString());
+		NetLog.d("get url:" + sb.toString());
 
 		HttpGet get = new HttpGet(sb.toString());
 		return get;
 	}
 
 	protected void logPostParams(String url, List<NameValuePair> params) {
-		NetLog.d(TAG, "url: " + url);
+		NetLog.d("url: " + url);
 		StringBuilder sb = new StringBuilder();
 		for (NameValuePair param : params) {
 			sb.append(param.getName() + ":" + param.getValue() + ", ");
 		}
-		NetLog.d(TAG, "params: " + sb.toString());
+		NetLog.d("params: " + sb.toString());
 	}
 
 	@Override

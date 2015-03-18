@@ -28,7 +28,7 @@ public class CurrencyRequest extends HttpRequest {
 	
 	@Override
 	protected HttpResponse getMockResponse() {
-		return null;
+		return new CurrencyResponse();
 	}
 	
 	@Override

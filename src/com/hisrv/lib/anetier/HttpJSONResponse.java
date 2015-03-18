@@ -14,6 +14,13 @@ abstract public class HttpJSONResponse extends HttpResponse {
 	
 	private String mRstString = "";
 
+	/**
+	 * Just for mock response
+	 */
+	public HttpJSONResponse() {
+		super();
+	}
+	
 	public HttpJSONResponse(byte[] rst, Object tag) {
 		super(rst, tag);
 		setError(NETWORK_ERROR);
