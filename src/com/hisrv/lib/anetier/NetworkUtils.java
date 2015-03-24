@@ -1,5 +1,10 @@
 package com.hisrv.lib.anetier;
 
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.apache.http.util.ByteArrayBuffer;
+
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -67,4 +72,29 @@ public class NetworkUtils {
 		return flag;
 	}
 
+	public static byte[] toByteArray(final InputStream instream,
+			final long contentLength) throws IOException {
+		if (instream == null) {
+			return null;
+		}
+		if (contentLength > Integer.MAX_VALUE) {
+			throw new IllegalArgumentException(
+					"HTTP entity too large to be buffered in memory");
+		}
+		int i = (int) contentLength;
+		if (i < 0) {
+			i = 4096;
+		}
+		ByteArrayBuffer buffer = new ByteArrayBuffer(i);
+		try {
+			byte[] tmp = new byte[4096];
+			int l;
+			while ((l = instream.read(tmp)) != -1) {
+				buffer.append(tmp, 0, l);
+			}
+		} finally {
+			instream.close();
+		}
+		return buffer.toByteArray();
+	}
 }

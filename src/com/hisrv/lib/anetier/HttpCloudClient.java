@@ -1,6 +1,7 @@
 package com.hisrv.lib.anetier;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
@@ -11,6 +12,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.zip.GZIPInputStream;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -33,7 +35,6 @@ import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
-import org.apache.http.util.EntityUtils;
 
 public class HttpCloudClient {
 
@@ -107,6 +108,11 @@ public class HttpCloudClient {
 
 	public byte[] excuteHttpRequest(HttpUriRequest request)
 			throws ClientProtocolException, IOException {
+		request.addHeader("Accept-Encoding", "gzip"); //gzip encoding support
+		String ua = System.getProperty("http.agent");
+		if (ua != null) {
+			request.addHeader("User-Agent", ua);
+		}
 		HttpResponse response = mClient.execute(request);
 		Header[] headers = response.getHeaders("Cache-Control");
 		for (Header header : headers) {
@@ -115,7 +121,12 @@ public class HttpCloudClient {
 				request.setHeader("cache_pic", "true");
 			}
 		}
-		byte[] bytes = EntityUtils.toByteArray(response.getEntity());
+		InputStream instream = response.getEntity().getContent();
+		Header contentEncoding = response.getFirstHeader("Content-Encoding");
+		if (contentEncoding != null && contentEncoding.getValue().equalsIgnoreCase("gzip")) {
+		    instream = new GZIPInputStream(instream);
+		}
+		byte[] bytes = NetworkUtils.toByteArray(instream, response.getEntity().getContentLength());
 		response.getEntity().consumeContent();
 
 		int code = response.getStatusLine().getStatusCode();
