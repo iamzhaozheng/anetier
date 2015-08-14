@@ -15,6 +15,8 @@ abstract public class HttpResponse {
 	
 	protected Object mTag;
 	
+	private String mDetailLogs;
+	
 	@SuppressLint("UseSparseArrays")
 	private static Map<Integer, String> mMapErrorMsg = new HashMap<Integer, String> ();
 	
@@ -23,12 +25,21 @@ abstract public class HttpResponse {
 			setError(NETWORK_ERROR);
 			return;
 		}
+		mDetailLogs = "";
 		mTag = tag;
 	}
 	
 	public void setError(int error) {
 		this.error = error;
 		errorMsg = mMapErrorMsg.get(error);
+	}
+	
+	public void appendLog(String s) {
+		mDetailLogs += s + "\n";
+	}
+	
+	public String getDetailLogs() {
+		return mDetailLogs;
 	}
 	
 	public static void setErrorMsg(int error, String msg) {

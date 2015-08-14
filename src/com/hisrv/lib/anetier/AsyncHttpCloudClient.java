@@ -52,9 +52,11 @@ public class AsyncHttpCloudClient extends Thread {
 			mClient = new HttpCloudClient();
 			resp = mClient.excuteHttpRequest(mReq);
 		} catch (ClientProtocolException e) {
+			NetLog.append(e);
 			e.printStackTrace();
 			return null;
 		} catch (IOException e) {
+			NetLog.append(e);
 			e.printStackTrace();
 			return null;
 		}

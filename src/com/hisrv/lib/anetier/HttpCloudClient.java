@@ -31,50 +31,53 @@ import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 
 public class HttpCloudClient {
-
+	
 	protected static final int MAX_ROUTE_CONN = 50;
 	protected static final int MAX_TOTAL_CONNECTIONS = 100;
-	protected static final int CONNECTION_TIMEOUT = 20 * 1000;
+	protected static final int CONNECTION_TIMEOUT = 10 * 1000;
 	protected static final int SOCKET_CONNECTION_TIMEOUT = 20 * 1000;
 	protected static final int HTTP_PORT = 80;
 	protected static final int HTTPS_PORT = 443;
 	protected static final int HTTPS_PORT2 = 8443;
 
 	private DefaultHttpClient mClient;
-
+	
 	public HttpCloudClient() {
 		initClient();
 	}
 
 	protected void initClient() {
-
+		NetLog.append("init start");
 		try {
 			HttpParams httpParams = new BasicHttpParams();
 			initParams(httpParams);
+			NetLog.append("init params");
 			SchemeRegistry registry = new SchemeRegistry();
 			registry.register(new Scheme("http", PlainSocketFactory
 					.getSocketFactory(), HTTP_PORT));
+			NetLog.append("init registry");
 			KeyStore trustStore;
 			trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
 			trustStore.load(null, null);
-
-			ThreadSafeClientConnManager manager = new ThreadSafeClientConnManager(
-					httpParams, registry);
-			mClient = new DefaultHttpClient(manager, httpParams);
-
+			NetLog.append("init trustStore");
+			mClient = new DefaultHttpClient(httpParams);
+			NetLog.append("init ok");
 		} catch (KeyStoreException e) {
+			NetLog.append(e);
 			e.printStackTrace();
 		} catch (NoSuchAlgorithmException e) {
+			NetLog.append(e);
 			e.printStackTrace();
 		} catch (CertificateException e) {
+			NetLog.append(e);
 			e.printStackTrace();
 		} catch (IOException e) {
+			NetLog.append(e);
 			e.printStackTrace();
 		}
 
@@ -98,22 +101,25 @@ public class HttpCloudClient {
 	public void clear() {
 		mClient.clearRequestInterceptors();
 		mClient.clearResponseInterceptors();
-
+		NetLog.append("clear client");
 	}
 
 	public void cancel() {
 		mClient.getConnectionManager().shutdown();
-
+		NetLog.append("cancel client");
 	}
 
 	public byte[] excuteHttpRequest(HttpUriRequest request)
 			throws ClientProtocolException, IOException {
+		NetLog.append("excute start");
 		request.addHeader("Accept-Encoding", "gzip"); //gzip encoding support
 		String ua = System.getProperty("http.agent");
 		if (ua != null) {
 			request.addHeader("User-Agent", ua);
 		}
+		NetLog.append("excute ua added");
 		HttpResponse response = mClient.execute(request);
+		NetLog.append("excute response got");
 		Header[] headers = response.getHeaders("Cache-Control");
 		for (Header header : headers) {
 			if (header.getValue() != null
@@ -121,6 +127,7 @@ public class HttpCloudClient {
 				request.setHeader("cache_pic", "true");
 			}
 		}
+		NetLog.append("excute header");
 		InputStream instream = response.getEntity().getContent();
 		Header contentEncoding = response.getFirstHeader("Content-Encoding");
 		if (contentEncoding != null && contentEncoding.getValue().equalsIgnoreCase("gzip")) {
@@ -128,15 +135,18 @@ public class HttpCloudClient {
 		}
 		byte[] bytes = NetworkUtils.toByteArray(instream, response.getEntity().getContentLength());
 		response.getEntity().consumeContent();
+		NetLog.append("excute consumed content");
 
 		int code = response.getStatusLine().getStatusCode();
 		if (code == HttpStatus.SC_OK) {
 
 			// mClient.getConnectionManager().
 			mClient.getConnectionManager().shutdown();
+			NetLog.append("excute code:" + code);
 			return bytes;
 		} else {
 			mClient.getConnectionManager().shutdown();
+			NetLog.append("excute code:" + code);
 			throw new SocketException("error code:" + code);
 
 		}
@@ -181,5 +191,5 @@ public class HttpCloudClient {
 			return sslContext.getSocketFactory().createSocket();
 		}
 	}
-
+	
 }

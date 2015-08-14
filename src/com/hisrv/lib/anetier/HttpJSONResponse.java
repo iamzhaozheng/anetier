@@ -30,6 +30,7 @@ abstract public class HttpJSONResponse extends HttpResponse {
 			mRstString = s;
 
 			JSONObject json = new JSONObject(mRstString);
+			NetLog.d(mRstString);
 			parse(json);
 			
 		} catch (JSONException e) {

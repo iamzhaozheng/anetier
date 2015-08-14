@@ -37,6 +37,7 @@ abstract public class HttpRequest implements HttpCallBack {
 
 	public HttpRequest() {
 		mFiles = new ArrayList<HttpRequest.NameFilePair>();
+		NetLog.clear();
 	}
 
 	public void clearListener() {
@@ -53,9 +54,8 @@ abstract public class HttpRequest implements HttpCallBack {
 	}
 
 	public void execute(final OnResponseListener l) {
-
+		NetLog.append("execute start");
 		mOnResponseListener = l;
-
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 		fillParams(params);
 		logPostParams(getUrl(), params);
@@ -102,17 +102,21 @@ abstract public class HttpRequest implements HttpCallBack {
 			}
 			resp = getResponse(
 					new HttpCloudClient().excuteHttpRequest(mRequest), mTag);
+			NetLog.append("get resp ok");
 		} catch (UnsupportedEncodingException e) {
 			resp = getResponse(null, mTag);
 			resp.setError(HttpResponse.NETWORK_ERROR);
+			NetLog.append(e);
 			e.printStackTrace();
 		} catch (ClientProtocolException e) {
 			resp = getResponse(null, mTag);
 			resp.setError(HttpResponse.NETWORK_ERROR);
+			NetLog.append(e);
 			e.printStackTrace();
 		} catch (IOException e) {
 			resp = getResponse(null, mTag);
 			resp.setError(HttpResponse.NETWORK_ERROR);
+			NetLog.append(e);
 			e.printStackTrace();
 		}
 		return resp;
@@ -181,6 +185,8 @@ abstract public class HttpRequest implements HttpCallBack {
 			sb.append(param.getName() + ":" + param.getValue() + ", ");
 		}
 		NetLog.d("params: " + sb.toString());
+		NetLog.append("url: " + url);
+		NetLog.append("params: " + sb.toString());
 	}
 
 	@Override
